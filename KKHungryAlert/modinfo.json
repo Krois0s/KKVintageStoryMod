@@ -1,0 +1,10 @@
+{
+  "type": "code",
+  "modid": "kkhungryalert",
+  "name": "KKHungryAlert",
+  "side": "universal",
+  "authors": [ "User" ],
+  "description": "Alerts the player when hungry with a stomach growl sound.",
+  "version": "1.0.0",
+  "dependencies": { "game": "" }
+}

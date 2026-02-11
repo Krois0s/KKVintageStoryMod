@@ -1,0 +1,10 @@
+{
+    "stomach": {
+        "category": "sound",
+        "sounds": [
+            {
+                "name": "sounds/stomach"
+            }
+        ]
+    }
+}
