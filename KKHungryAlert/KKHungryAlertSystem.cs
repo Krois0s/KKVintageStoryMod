@@ -11,13 +11,81 @@ public class KKHungryAlertSystem : ModSystem
 {
     private ICoreClientAPI capi;
     private long listenerId;
+    private KKHungryAlertConfig config;
 
     public override void StartClientSide(ICoreClientAPI api)
     {
         base.StartClientSide(api);
         capi = api;
-        // Check every 10 seconds (10000 ms)
-        listenerId = api.Event.RegisterGameTickListener(CheckHunger, 10000);
+
+        LoadConfig();
+
+        // Register command to change settings on the fly
+        // Usage: .kkha threshold [value] | .kkha interval [value] | .kkha volume [value]
+        api.ChatCommands.Create("kkha")
+            .WithDescription("KKHungryAlert Configuration")
+            .WithAlias("kkhungryalert")
+            .RequiresPrivilege(Privilege.chat)
+            .BeginSubCommand("threshold")
+                .WithArgs(api.ChatCommands.Parsers.Float("value"))
+                .HandleWith(args => UpdateConfig("threshold", (float)args.Parsers[0].GetValue()))
+            .EndSubCommand()
+            .BeginSubCommand("interval")
+                .WithArgs(api.ChatCommands.Parsers.Float("value"))
+                .HandleWith(args => UpdateConfig("interval", (float)args.Parsers[0].GetValue()))
+            .EndSubCommand()
+            .BeginSubCommand("volume")
+                .WithArgs(api.ChatCommands.Parsers.Float("value"))
+                .HandleWith(args => UpdateConfig("volume", (float)args.Parsers[0].GetValue()))
+            .EndSubCommand();
+
+        StartListener();
+    }
+
+    private void LoadConfig()
+    {
+        try
+        {
+            config = capi.LoadModConfig<KKHungryAlertConfig>("KKHungryAlert.json");
+            if (config == null)
+            {
+                config = new KKHungryAlertConfig();
+                capi.StoreModConfig(config, "KKHungryAlert.json");
+            }
+        }
+        catch
+        {
+            config = new KKHungryAlertConfig();
+            capi.StoreModConfig(config, "KKHungryAlert.json");
+        }
+    }
+
+    private TextCommandResult UpdateConfig(string key, float value)
+    {
+        switch (key)
+        {
+            case "threshold":
+                config.HungerThreshold = value;
+                capi.ShowChatMessage($"[KKHungryAlert] Threshold set to {value}");
+                break;
+            case "interval":
+                config.CheckIntervalSeconds = value;
+                capi.ShowChatMessage($"[KKHungryAlert] Interval set to {value}s");
+                StartListener();
+                break;
+            case "volume":
+                config.SoundVolume = value;
+                capi.ShowChatMessage($"[KKHungryAlert] Volume set to {value}");
+                break;
+        }
+        capi.StoreModConfig(config, "KKHungryAlert.json");
+        return TextCommandResult.Success();
+    }
+
+    private void StartListener()
+    {
+        if (listenerId != 0) capi.Event.UnregisterGameTickListener(listenerId);
+        listenerId = capi.Event.RegisterGameTickListener(CheckHunger, (int)(config.CheckIntervalSeconds * 1000));
     }
 
     private void CheckHunger(float dt)
@@ -29,15 +97,10 @@ public class KKHungryAlertSystem : ModSystem
 
         float saturation = hungerTree.GetFloat("currentsaturation");
 
-        // Max saturation is typically 1500. Alert if below 300 (20%)
-        if (saturation < 300)
+        if (saturation < config.HungerThreshold)
         {
-            // Play a sound to indicate hunger. 
-            // Using "kkhungryalert:sounds/stomach"
-            capi.World.PlaySoundAt(new AssetLocation("kkhungryalert:sounds/stomach"), capi.World.Player.Entity, null, true, 16, 1);
-            
-            // Optional: Show a message for debugging clarity
-            // capi.ShowChatMessage("Your stomach growls...");
+            // Play sound with configured volume
+            capi.World.PlaySoundAt(new AssetLocation("kkhungryalert:sounds/stomach"), capi.World.Player.Entity, null, true, 16, config.SoundVolume);
         }
     }
 

@@ -9,3 +9,5 @@ Releases/
 VanillaCode/
 VsCodeModTemplate/
 CakeBuild/
+build.ps1
+build.sh
