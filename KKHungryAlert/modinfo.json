@@ -6,7 +6,7 @@
   "authors": [
     "KroiS0s"
   ],
-  "description": "Alerts the player when hungry with a stomach growl sound.",
+  "description": "Alerts the player when hungry with a stomach growl sound. Setting Command: '.kkha'",
   "version": "1.0.0",
   "dependencies": {
     "game": "1.21.6"
