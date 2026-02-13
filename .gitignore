@@ -4,10 +4,12 @@
 bin/
 obj/
 .idea/
+.vs/
 .vscode/
 Releases/
 VanillaCode/
 VsCodeModTemplate/
 CakeBuild/
+otherMOD/
 build.ps1
 build.sh
