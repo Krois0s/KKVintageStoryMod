@@ -59,11 +59,11 @@ public class KKHungryAlertConfigDialog(ICoreClientAPI capi, KKHungryAlertSystem 
         SingleComposer = capi.Gui.CreateCompo("kkhungryalertconfig", dialogBounds)
             .AddShadedDialogBG(bgBounds) // 背景を追加
             .AddDialogTitleBar("KKHungryAlert Settings", OnTitleBarClose) // タイトルバーは自動配置
-            .AddStaticText("Hunger Threshold", CairoFont.WhiteSmallText(), thresholdTextBounds)
+            .AddDynamicText($"Hunger Threshold: {config.HungerThreshold}", CairoFont.WhiteSmallText(), thresholdTextBounds, "thresholdText")
             .AddSlider(OnThresholdChanged, thresholdSliderBounds, "thresholdSlider")
-            .AddStaticText("Check Interval (Seconds)", CairoFont.WhiteSmallText(), intervalTextBounds)
+            .AddDynamicText($"Check Interval: {config.CheckIntervalSeconds}s", CairoFont.WhiteSmallText(), intervalTextBounds, "intervalText")
             .AddSlider(OnIntervalChanged, intervalSliderBounds, "intervalSlider")
-            .AddStaticText("Volume", CairoFont.WhiteSmallText(), volumeTextBounds)
+            .AddDynamicText($"Volume: {config.SoundVolume:P0}", CairoFont.WhiteSmallText(), volumeTextBounds, "volumeText")
             .AddSlider(OnVolumeChanged, volumeSliderBounds, "volumeSlider")
             .AddSmallButton("Close", OnButtonClose, closeButtonBounds)
             .Compose();
@@ -77,18 +77,22 @@ public class KKHungryAlertConfigDialog(ICoreClientAPI capi, KKHungryAlertSystem 
     private bool OnThresholdChanged(int value)
     {
         system.UpdateConfigFromGui("threshold", value);
+        SingleComposer.GetDynamicText("thresholdText").SetNewText($"Hunger Threshold: {value}");
         return true;
     }
 
     private bool OnIntervalChanged(int value)
     {
         system.UpdateConfigFromGui("interval", value);
+        SingleComposer.GetDynamicText("intervalText").SetNewText($"Check Interval: {value}s");
         return true;
     }
 
     private bool OnVolumeChanged(int value)
     {
-        system.UpdateConfigFromGui("volume", value / 100f);
+        float vol = value / 100f;
+        system.UpdateConfigFromGui("volume", vol);
+        SingleComposer.GetDynamicText("volumeText").SetNewText($"Volume: {vol:P0}");
         return true;
     }
 

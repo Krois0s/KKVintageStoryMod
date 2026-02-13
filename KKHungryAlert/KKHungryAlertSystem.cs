@@ -28,6 +28,7 @@ public class KKHungryAlertSystem : ModSystem
             .WithDescription("KKHungryAlert Configuration")
             .WithAlias("kkhungryalert")
             .RequiresPrivilege(Privilege.chat)
+            .HandleWith(args => OpenConfigDialog())
             .BeginSubCommand("threshold")
                 .WithArgs(api.ChatCommands.Parsers.Float("value"))
                 .HandleWith(args => UpdateConfig("threshold", (float)args.Parsers[0].GetValue()))
