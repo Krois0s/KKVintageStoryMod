@@ -4,7 +4,7 @@
   "name": "KKHungryAlert",
   "side": "client",
   "authors": [
-    "KroiS0s"
+    "Krois0s"
   ],
   "description": "Alerts the player when hungry with a stomach growl sound. Setting Command: '.kkha'",
   "version": "1.0.0",
