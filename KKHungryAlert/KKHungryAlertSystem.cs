@@ -78,7 +78,7 @@ public class KKHungryAlertSystem : ModSystem
         switch (key)
         {
             case "threshold":
-                config.HungerThreshold = value;
+                config.SatietyThreshold = value;
                 capi.ShowChatMessage($"[KKHungryAlert] Threshold set to {value}");
                 break;
             case "interval":
@@ -100,7 +100,7 @@ public class KKHungryAlertSystem : ModSystem
         switch (key)
         {
             case "threshold":
-                config.HungerThreshold = value;
+                config.SatietyThreshold = value;
                 break;
             case "interval":
                 config.CheckIntervalSeconds = value;
@@ -132,7 +132,7 @@ public class KKHungryAlertSystem : ModSystem
 
         float saturation = hungerTree.GetFloat("currentsaturation");
 
-        if (saturation < config.HungerThreshold)
+        if (saturation < config.SatietyThreshold)
         {
             // Play sound with configured volume
             capi.World.PlaySoundAt(new AssetLocation("kkhungryalert:sounds/stomach"), capi.World.Player.Entity, null, true, 16, config.SoundVolume);

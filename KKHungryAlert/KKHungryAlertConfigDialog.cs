@@ -59,7 +59,7 @@ public class KKHungryAlertConfigDialog(ICoreClientAPI capi, KKHungryAlertSystem 
         SingleComposer = capi.Gui.CreateCompo("kkhungryalertconfig", dialogBounds)
             .AddShadedDialogBG(bgBounds) // 背景を追加
             .AddDialogTitleBar("KKHungryAlert Settings", OnTitleBarClose) // タイトルバーは自動配置
-            .AddDynamicText($"Hunger Threshold: {config.HungerThreshold}", CairoFont.WhiteSmallText(), thresholdTextBounds, "thresholdText")
+            .AddDynamicText($"Satiety Threshold: {config.SatietyThreshold}", CairoFont.WhiteSmallText(), thresholdTextBounds, "thresholdText")
             .AddSlider(OnThresholdChanged, thresholdSliderBounds, "thresholdSlider")
             .AddDynamicText($"Check Interval: {config.CheckIntervalSeconds}s", CairoFont.WhiteSmallText(), intervalTextBounds, "intervalText")
             .AddSlider(OnIntervalChanged, intervalSliderBounds, "intervalSlider")
@@ -69,7 +69,7 @@ public class KKHungryAlertConfigDialog(ICoreClientAPI capi, KKHungryAlertSystem 
             .Compose();
 
         // Set initial values
-        SingleComposer.GetSlider("thresholdSlider").SetValues((int)config.HungerThreshold, 0, 1500, 50);
+        SingleComposer.GetSlider("thresholdSlider").SetValues((int)config.SatietyThreshold, 0, 1500, 50);
         SingleComposer.GetSlider("intervalSlider").SetValues((int)config.CheckIntervalSeconds, 1, 600, 1);
         SingleComposer.GetSlider("volumeSlider").SetValues((int)(config.SoundVolume * 100), 0, 100, 1);
     }
@@ -77,7 +77,7 @@ public class KKHungryAlertConfigDialog(ICoreClientAPI capi, KKHungryAlertSystem 
     private bool OnThresholdChanged(int value)
     {
         system.UpdateConfigFromGui("threshold", value);
-        SingleComposer.GetDynamicText("thresholdText").SetNewText($"Hunger Threshold: {value}");
+        SingleComposer.GetDynamicText("thresholdText").SetNewText($"Satiety Threshold: {value}");
         return true;
     }
 
